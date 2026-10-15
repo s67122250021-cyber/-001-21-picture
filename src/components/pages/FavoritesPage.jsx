@@ -1,0 +1,7 @@
+import { useEffect,useState } from "react";
+import AttractionCard from "../common/AttractionCard";
+import EmptyState from "../common/EmptyState";
+import useFavorites from "../../hooks/useFavorites.jsx";
+import useLanguage from "../../context/LanguageContext";
+import { getAttractions } from "../../services/attractionService";
+export default function FavoritesPage(){const {favorites}=useFavorites(),{t}=useLanguage(),[state,setState]=useState({loading:true,items:[],error:false});useEffect(()=>{getAttractions().then(items=>setState({loading:false,items,error:false})).catch(()=>setState({loading:false,items:[],error:true}))},[]);const items=state.items.filter(x=>favorites.includes(x.attraction_id));return <div className="page container"><div className="page-heading"><div><p className="eyebrow">FAVORITES</p><h1>{t("รายการโปรด","Favorites")}</h1><p>{t("บันทึกไว้","Saved")} {items.length} {t("สถานที่","places")}</p></div></div>{state.loading?<div className="loading-state">{t("กำลังโหลดข้อมูล...","Loading...")}</div>:state.error?<EmptyState title={t("โหลดข้อมูลไม่ได้","Could not load data")} message={t("กรุณาลองใหม่อีกครั้ง","Please try again.")}/>:items.length?<div className="grid">{items.map(x=><AttractionCard key={x.attraction_id} attraction={x}/>)}</div>:<EmptyState title={t("ยังไม่มีรายการโปรด","No saved favorites")} message={t("กดปุ่มหัวใจบนสถานที่เพื่อบันทึกไว้ที่นี่","Use the heart button to save places here.")} action={{to:"/attractions",label:t("สำรวจสถานที่ท่องเที่ยว","Explore attractions")}}/>}</div>}

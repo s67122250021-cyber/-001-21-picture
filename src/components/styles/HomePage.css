@@ -1,0 +1,6 @@
+.hero{margin-top:30px;min-height:420px;border-radius:24px;display:flex;align-items:center;padding:55px;background:linear-gradient(135deg,#dbeafe,#eef2ff)}
+.hero-content{max-width:760px}.hero h1{margin:0 0 18px;font-size:clamp(36px,6vw,62px);line-height:1.12;color:#111827}
+.hero-description{max-width:650px;color:#4b5563;font-size:18px;margin-bottom:25px}
+.province-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:10px}.province-grid a{padding:14px;background:#fff;border:1px solid #e5e7eb;border-radius:10px;text-align:center}
+.province-grid a:hover{border-color:#818cf8;color:#3730a3}
+@media(max-width:800px){.hero{padding:32px 24px}.province-grid{grid-template-columns:repeat(2,1fr)}}

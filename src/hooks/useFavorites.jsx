@@ -1,0 +1,4 @@
+import { createContext, useContext, useEffect, useState } from "react";
+const FavoritesContext=createContext(null), KEY="thai-attractions-favorites";
+export function FavoritesProvider({children}){const [favorites,setFavorites]=useState(()=>{try{return JSON.parse(localStorage.getItem(KEY))||[]}catch{return[]}});useEffect(()=>localStorage.setItem(KEY,JSON.stringify(favorites)),[favorites]);const toggleFavorite=id=>setFavorites(items=>items.includes(id)?items.filter(item=>item!==id):[...items,id]);return <FavoritesContext.Provider value={{favorites,toggleFavorite,isFavorite:id=>favorites.includes(id)}}>{children}</FavoritesContext.Provider>}
+export default function useFavorites(){const value=useContext(FavoritesContext);if(!value)throw new Error("useFavorites must be used inside FavoritesProvider");return value}

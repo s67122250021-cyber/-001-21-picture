@@ -1,0 +1,7 @@
+.navbar{position:sticky;top:0;z-index:10;background:#fff;border-bottom:1px solid #e5e7eb}
+.navbar-inner{min-height:72px;display:flex;align-items:center;justify-content:space-between;gap:30px}
+.brand{display:flex;align-items:center;gap:10px}.brand-mark{display:grid;place-items:center;width:42px;height:42px;border-radius:12px;background:#111827;color:#fff;font-weight:800}
+.brand strong,.brand small{display:block}.brand small{color:#6b7280;font-size:12px}
+.nav-links{display:flex;gap:6px}.nav-links a{padding:9px 13px;border-radius:9px;color:#4b5563}
+.nav-links a:hover,.nav-links a.active{background:#eef2ff;color:#3730a3}
+@media(max-width:600px){.navbar-inner{padding:10px 0;align-items:flex-start;flex-direction:column;gap:8px}.nav-links{width:100%;overflow:auto}.nav-links a{white-space:nowrap}}

@@ -1,0 +1,3 @@
+import useFavorites from "../../hooks/useFavorites.jsx";
+import useLanguage from "../../context/LanguageContext";
+export default function FavoriteButton({attractionId,label=false}){const {isFavorite,toggleFavorite}=useFavorites(),{t}=useLanguage(), favorite=isFavorite(attractionId);return <button type="button" className={`favorite-button ${favorite?"active":""}`} aria-label={favorite?"Remove favorite":"Add favorite"} onClick={event=>{event.preventDefault();toggleFavorite(attractionId)}}>{favorite?"♥":"♡"}{label&&(favorite?t(" ลบจากรายการโปรด"," Remove favorite"):t(" เพิ่มรายการโปรด"," Add favorite"))}</button>}

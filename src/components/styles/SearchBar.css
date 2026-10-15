@@ -1,0 +1,2 @@
+.search-bar{display:flex;width:min(620px,100%);background:#fff;border:1px solid #dbe1e8;border-radius:14px;padding:5px;box-shadow:0 12px 30px #0f172a14}
+.search-bar input{min-width:0;flex:1;border:0;outline:0;padding:12px 14px}.search-bar button{border:0;border-radius:10px;padding:0 20px;background:#2563eb;color:#fff;cursor:pointer}
