@@ -1,9 +1,110 @@
-import { Link,useParams } from "react-router-dom";
-import { useEffect,useState } from "react";
+import { Link, useParams } from "react-router-dom";
+import { useEffect, useState } from "react";
 import useLanguage from "../../context/LanguageContext";
-import { getAttractionById,getCategory,getProvince } from "../../services/attractionService";
+import { getAttractionById, getCategory, getProvince } from "../../services/attractionService";
 import FavoriteButton from "../features/FavoriteButton";
 import MapView from "../features/MapView";
 import EmptyState from "../common/EmptyState";
 import "../styles/AttractionDetailPage.css";
-export default function AttractionDetailPage(){const {id}=useParams(),{language,t}=useLanguage(),[state,setState]=useState({loading:true,item:null,error:false});useEffect(()=>{getAttractionById(id).then(item=>setState({loading:false,item,error:false})).catch(()=>setState({loading:false,item:null,error:true}))},[id]);if(state.loading)return <div className="container page loading-state">{t("กำลังโหลดข้อมูล...","Loading...")}</div>;if(!state.item)return <section className="container empty-page"><EmptyState title={t("ไม่พบสถานที่ท่องเที่ยว","Attraction not found")} message={state.error?t("ไม่สามารถโหลดข้อมูลได้","Data could not be loaded."):""} action={{to:"/attractions",label:t("กลับไปสถานที่ท่องเที่ยว","Back to attractions")}}/></section>;const item=state.item,province=getProvince(item),category=getCategory(item),share=async()=>{try{await navigator.share?.({title:item[language==="en"?"name_en":"name_th"],url:window.location.href})||await navigator.clipboard?.writeText(window.location.href);alert(t("คัดลอกลิงก์แล้ว","Link copied."))}catch{alert(t("ไม่สามารถแชร์ลิงก์ได้","Could not share this link."))}};return <div className="page container detail-page"><Link to="/attractions" className="back-link">← {t("กลับไปสถานที่ท่องเที่ยว","Back to attractions")}</Link><section className="detail-hero"><div className="detail-image-placeholder">{t("ยังไม่มีรูปภาพ","Image coming soon")}</div><div className="detail-summary"><span className="tag">{province?.[language==="en"?"name_en":"name_th"]}</span><h1>{item[language==="en"?"name_en":"name_th"]}</h1><p>{item[language==="en"?"description_en":"description_th"]}</p><div className="detail-actions"><FavoriteButton attractionId={item.attraction_id} label/><button className="btn secondary" onClick={share}>{t("แชร์สถานที่นี้","Share this place")}</button></div></div></section><section className="detail-content"><div className="detail-section"><h2>{t("ประวัติ / ความเป็นมา","History")}</h2><p>{item[language==="en"?"history_en":"history_th"]}</p></div><div className="detail-section"><h2>{t("ข้อมูลสถานที่","Attraction information")}</h2><dl className="info-list"><div><dt>{t("จังหวัด","Province")}</dt><dd>{province?.[language==="en"?"name_en":"name_th"]}</dd></div><div><dt>{t("ประเภท","Category")}</dt><dd>{category?.[language==="en"?"name_en":"name_th"]}</dd></div><div><dt>Latitude</dt><dd>{item.latitude??t("ยังไม่มีข้อมูล","Not available")}</dd></div><div><dt>Longitude</dt><dd>{item.longitude??t("ยังไม่มีข้อมูล","Not available")}</dd></div></dl></div><MapView attraction={item}/></section></div>}
+
+export default function AttractionDetailPage() {
+  const { id } = useParams();
+  const { language, t } = useLanguage();
+  const [state, setState] = useState({ loading: true, item: null, error: false });
+
+  useEffect(() => {
+    getAttractionById(id)
+      .then((item) => setState({ loading: false, item, error: false }))
+      .catch(() => setState({ loading: false, item: null, error: true }));
+  }, [id]);
+
+  if (state.loading) return <div className="container page loading-state">{t("กำลังโหลดข้อมูล...", "Loading...")}</div>;
+
+  if (!state.item)
+    return (
+      <section className="container empty-page">
+        <EmptyState
+          title={t("ไม่พบสถานที่ท่องเที่ยว", "Attraction not found")}
+          message={state.error ? t("ไม่สามารถโหลดข้อมูลได้", "Data could not be loaded.") : ""}
+          action={{ to: "/attractions", label: t("กลับไปสถานที่ท่องเที่ยว", "Back to attractions") }}
+        />
+      </section>
+    );
+
+  const item = state.item;
+  const province = getProvince(item);
+  const category = getCategory(item);
+
+  const share = async () => {
+    try {
+      await (navigator.share?.({ title: item[language === "en" ? "name_en" : "name_th"], url: window.location.href }) ||
+        navigator.clipboard?.writeText(window.location.href));
+      alert(t("คัดลอกลิงก์แล้ว", "Link copied."));
+    } catch {
+      alert(t("ไม่สามารถแชร์ลิงก์ได้", "Could not share this link."));
+    }
+  };
+
+  // ดึง ID สี่ตัวอักษรให้เป็นฟอร์แมต 3 หลัก เช่น 001, 002
+  const formattedId = item.attraction_id.toString().padStart(3, "0");
+
+  return (
+    <div className="page container detail-page">
+      <Link to="/attractions" className="back-link">
+        ← {t("กลับไปสถานที่ท่องเที่ยว", "Back to attractions")}
+      </Link>
+      <section className="detail-hero">
+        <div className="detail-image-container" style={{ width: "100%", maxHeight: "400px", overflow: "hidden", borderRadius: "12px" }}>
+          <img
+            src={`/images/attractions/attraction_${formattedId}.jpg`}
+            alt={item[language === "en" ? "name_en" : "name_th"]}
+            style={{ width: "100%", height: "100%", objectFit: "cover" }}
+            onError={(e) => {
+              e.target.onerror = null;
+              e.target.parentElement.innerHTML = `<div className="detail-image-placeholder">${t("ยังไม่มีรูปภาพ", "Image coming soon")}</div>`;
+            }}
+          />
+        </div>
+        <div className="detail-summary">
+          <span className="tag">{province?.[language === "en" ? "name_en" : "name_th"]}</span>
+          <h1>{item[language === "en" ? "name_en" : "name_th"]}</h1>
+          <p>{item[language === "en" ? "description_en" : "description_th"]}</p>
+          <div className="detail-actions">
+            <FavoriteButton attractionId={item.attraction_id} label />
+            <button className="btn secondary" onClick={share}>
+              {t("แชร์สถานที่นี้", "Share this place")}
+            </button>
+          </div>
+        </div>
+      </section>
+      <section className="detail-content">
+        <div className="detail-section">
+          <h2>{t("ประวัติ / ความเป็นมา", "History")}</h2>
+          <p>{item[language === "en" ? "history_en" : "history_th"]}</p>
+        </div>
+        <div className="detail-section">
+          <h2>{t("ข้อมูลสถานที่", "Attraction information")}</h2>
+          <dl className="info-list">
+            <div>
+              <dt>{t("จังหวัด", "Province")}</dt>
+              <dd>{province?.[language === "en" ? "name_en" : "name_th"]}</dd>
+            </div>
+            <div>
+              <dt>{t("ประเภท", "Category")}</dt>
+              <dd>{category?.[language === "en" ? "name_en" : "name_th"]}</dd>
+            </div>
+            <div>
+              <dt>Latitude</dt>
+              <dd>{item.latitude ?? t("ยังไม่มีข้อมูล", "Not available")}</dd>
+            </div>
+            <div>
+              <dt>Longitude</dt>
+              <dd>{item.longitude ?? t("ยังไม่มีข้อมูล", "Not available")}</dd>
+            </div>
+          </dl>
+        </div>
+        <MapView attraction={item} />
+      </section>
+    </div>
+  );
+}
